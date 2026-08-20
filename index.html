@@ -143,6 +143,28 @@
   .review-item.correct .rmark{color:var(--teal);}
   .review-item.wrong .rmark{color:var(--danger);}
 
+  /* AI 코멘트 박스 (v2 신규) */
+  .ai-box{
+    background:linear-gradient(160deg, #23305c, #1a2648);
+    border:3px solid var(--lav);
+    border-radius:20px;
+    padding:18px 18px 16px;
+    margin-top:16px;
+    box-shadow:0 6px 0 rgba(179,157,219,0.2);
+    display:none;
+  }
+  .ai-box .ai-head{
+    display:flex; align-items:center; gap:8px;
+    font-size:13px; font-weight:800; color:var(--lav); margin-bottom:8px;
+  }
+  .ai-box .ai-head .dot{
+    width:8px; height:8px; border-radius:50%; background:var(--lav);
+    animation:blink 1.1s ease-in-out infinite;
+  }
+  .ai-box.done .ai-head .dot{animation:none; background:var(--teal);}
+  @keyframes blink{0%,100%{opacity:1;} 50%{opacity:0.25;}}
+  .ai-box .ai-text{font-size:15px; line-height:1.7; color:var(--ivory); font-weight:600;}
+
   .footer-bar{
     position:sticky; bottom:0; left:0; right:0;
     background:linear-gradient(0deg, var(--navy) 65%, transparent);
@@ -270,7 +292,7 @@
     </div>
   </div>
 
-  <!-- ══════════ 1.5단계: 제출완료 + 정답 확인 + 대표 여부 분기 ══════════ -->
+  <!-- ══════════ 1.5단계: 제출완료 + 정답 확인 + AI 코멘트 + 대표 여부 분기 ══════════ -->
   <div class="screen" id="screen-mid">
     <div class="mid-card">
       <div class="big-emoji">🎉</div>
@@ -278,6 +300,13 @@
       <p class="muted" style="margin:10px 0 18px;">네가 고른 답, 정답이랑 비교해볼까?</p>
     </div>
     <div id="review-list" style="margin-top:16px;"></div>
+
+    <!-- AI 코멘트 (v2 신규) -->
+    <div class="ai-box" id="ai-comment-box">
+      <div class="ai-head"><span class="dot"></span><span>AI 코멘트</span></div>
+      <div class="ai-text" id="ai-comment-text">불러오는 중...</div>
+    </div>
+
     <div class="mid-card" style="margin-top:18px;">
       <p class="muted" style="margin:0 0 22px;">
         이제 모둠끼리 모여서 <b>우마이야 왕조 카드 배열</b> 활동을 할 거야.<br>
@@ -537,16 +566,6 @@ function submitPhase1(){
   const summary = detail.map(d => d.q).join(', ') + ' 선택';
   const reasonsJoined = detail.map(d=>'[' + d.q + '] ' + d.reason).join(' / ');
 
-  postToSheet({
-    gameName: CONFIG.GAME_NAME_INDIVIDUAL,
-    studentId: sid,
-    studentName: name,
-    choiceSummary: summary,
-    diffSummary: '',
-    reflection: reasonsJoined,
-    choicesJson: JSON.stringify(detail)
-  });
-
   const reviewEl = document.getElementById('review-list');
   reviewEl.innerHTML = detail.map(d =>
     '<div class="review-item ' + (d.isCorrect ? 'correct' : 'wrong') + '">' +
@@ -559,7 +578,41 @@ function submitPhase1(){
   ).join('');
 
   document.getElementById('rep-tag').textContent = '대표 제출자: ' + sid + ' ' + name;
+
+  // AI 코멘트 박스: 로딩 상태로 먼저 보여주고, 응답 오면 채운다
+  const aiBox = document.getElementById('ai-comment-box');
+  const aiText = document.getElementById('ai-comment-text');
+  aiBox.classList.remove('done');
+  aiBox.style.display = 'block';
+  aiText.textContent = 'AI 코멘트를 만드는 중...';
+
   switchScreen('screen-mid');
+
+  postToSheet({
+    gameName: CONFIG.GAME_NAME_INDIVIDUAL,
+    studentId: sid,
+    studentName: name,
+    choiceSummary: summary,
+    diffSummary: '',
+    reflection: reasonsJoined,
+    choicesJson: JSON.stringify(detail)
+  }).then(renderAiComment);
+}
+
+/* AI 코멘트 렌더링 (v2 신규) */
+function renderAiComment(res){
+  const box = document.getElementById('ai-comment-box');
+  const text = document.getElementById('ai-comment-text');
+  box.classList.add('done');
+  if (res && res.result === 'success' && res.aiComment){
+    text.textContent = res.aiComment;
+  } else if (res && res.aiError){
+    text.textContent = 'AI 코멘트를 만드는 데 문제가 있었어. 선생님께 알려줘.';
+    console.warn('Gemini 오류:', res.aiError);
+  } else {
+    // 서버 미설정(로컬 테스트) 등으로 응답이 없을 때는 박스를 조용히 숨김
+    box.style.display = 'none';
+  }
 }
 
 /* ════════════ 2단계: 카드 배열 ════════════ */
@@ -637,16 +690,20 @@ function submitPhase2(){
   switchScreen('screen-result');
 }
 
-/* ════════════ 백엔드 전송 (기존 doPost 스키마 재사용) ════════════ */
+/* ════════════ 백엔드 전송 ════════════
+ * v2: Promise를 반환하도록 변경 — 응답(JSON)에 aiComment가 실려올 수 있음.
+ * WEBAPP_URL 미설정(로컬 테스트) 시에는 null을 resolve해서 호출부가 안전하게 처리하도록 함. */
 function postToSheet(payload){
   if (!CONFIG.WEBAPP_URL || CONFIG.WEBAPP_URL.indexOf('http') !== 0){
     console.warn('WEBAPP_URL 미설정 — 로컬 테스트 모드', payload);
-    return;
+    return Promise.resolve(null);
   }
-  fetch(CONFIG.WEBAPP_URL, {
+  return fetch(CONFIG.WEBAPP_URL, {
     method: 'POST',
     body: JSON.stringify(payload)
-  }).catch(err => console.error('전송 실패', err));
+  })
+  .then(res => res.json())
+  .catch(err => { console.error('전송 실패', err); return null; });
 }
 </script>
 </body>
