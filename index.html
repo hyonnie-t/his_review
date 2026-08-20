@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ko" style="background:#16264a;">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>이슬람 세계로 가는 길</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#16264a;
+    --navy-deep:#0d1730;
+    --card-bg:#20335f;
+    --card-bg2:#25396b;
+    --gold:#ffc93c;
+    --gold-dim:#d9a017;
+    --teal:#4fd9c4;
+    --pink:#ff8fa3;
+    --lav:#b39ddb;
+    --ivory:#fffaf0;
+    --ivory-dim:#b7c0e0;
+    --danger:#ff7a6b;
+    --radius:22px;
+  }
+  *{box-sizing:border-box;}
+  html,body{background:var(--navy) !important;}
+  body{
+    margin:0; min-height:100vh; color:var(--ivory);
+    font-family:'Pretendard', sans-serif; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:640px; margin:0 auto; padding:26px 18px 96px;}
+
+  @media (min-width:760px){
+    .wrap{max-width:760px; padding:36px 30px 110px;}
+    h1{font-size:28px !important;}
+    .qtext{font-size:18.5px !important;}
+    .choice{font-size:16.5px !important; padding:16px 18px !important;}
+    .choices-wrap{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+    .choices-wrap .choice:last-child:nth-child(odd){grid-column:1 / -1;}
+    button.primary{font-size:18px !important; padding:18px 40px !important; max-width:380px !important;}
+    input[type=text]{font-size:17px !important; padding:15px 16px !important;}
+    .sort-card{padding:18px 20px !important; font-size:17px !important;}
+    .sort-card .arrows button{width:42px !important; height:42px !important; font-size:17px !important;}
+  }
+
+  .mascot-row{display:flex; align-items:center; gap:10px; justify-content:center; margin-bottom:6px;}
+  .mascot{font-size:36px;}
+
+  .star8{
+    width:18px; height:18px; display:inline-block;
+    background:#3a4670; border-radius:5px;
+    transform:rotate(0deg);
+  }
+  .star8.filled{
+    background:var(--gold); box-shadow:0 0 10px rgba(255,201,60,0.7);
+    animation:pop .35s ease;
+  }
+  @keyframes pop{
+    0%{transform:scale(0.3) rotate(-15deg);} 60%{transform:scale(1.25) rotate(8deg);} 100%{transform:scale(1) rotate(0deg);}
+  }
+
+  header{text-align:center; margin-bottom:20px;}
+  .eyebrow{
+    display:inline-block; font-family:'Baloo 2', sans-serif; font-size:12.5px; font-weight:700; letter-spacing:0.04em;
+    color:var(--navy-deep); background:var(--teal);
+    padding:5px 16px; border-radius:20px; margin-bottom:12px;
+    box-shadow:0 3px 0 rgba(0,0,0,0.15);
+  }
+  h1{
+    font-family:'Nanum Myeongjo', serif; font-weight:800;
+    font-size:24px; margin:4px 0 8px; color:var(--ivory); line-height:1.35;
+  }
+  .sub{color:var(--ivory-dim); font-size:14.5px; line-height:1.65;}
+  .sub b{color:var(--gold);}
+
+  .progress-row{display:flex; justify-content:center; gap:8px; margin:18px 0 24px;}
+
+  .card{
+    background:var(--card-bg);
+    border:3px solid #2c3d6e;
+    border-radius:var(--radius);
+    padding:22px 20px;
+    margin-bottom:18px;
+    box-shadow:0 6px 0 rgba(0,0,0,0.18);
+  }
+  .card.done{border-color:var(--teal); box-shadow:0 6px 0 rgba(79,217,196,0.25);}
+
+  .qtag{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:12.5px; font-weight:800; color:var(--navy-deep);
+    border-radius:20px; padding:4px 13px; margin-bottom:12px;
+  }
+  .qtag .req{
+    background:var(--pink); color:var(--navy-deep); font-weight:800;
+    border-radius:20px; padding:2px 10px; font-size:11px; margin-left:4px;
+  }
+  .qtext{font-size:16.5px; line-height:1.55; margin-bottom:14px; font-weight:700; color:var(--ivory);}
+
+  .choice{
+    display:block; width:100%; text-align:left;
+    background:var(--card-bg2); border:3px solid #38487c;
+    color:var(--ivory); border-radius:16px; padding:14px 16px; margin-bottom:10px;
+    font-size:15px; cursor:pointer; font-family:inherit; line-height:1.5; font-weight:700;
+    transition:transform .12s, border-color .15s, background .15s;
+    min-height:52px;
+  }
+  .choice:active{transform:scale(0.97);}
+  .choice.selected{border-color:var(--gold); background:#4a3a12; color:var(--gold); transform:scale(1.02);}
+
+  .reason-box{margin-top:14px; display:none;}
+  .reason-box.show{display:block;}
+  .reason-box label{font-size:13px; color:var(--teal); font-weight:800; display:block; margin-bottom:7px;}
+  textarea{
+    width:100%; min-height:58px; resize:vertical;
+    background:var(--navy-deep); border:3px solid #38487c;
+    border-radius:14px; color:var(--ivory); padding:12px 14px; font-family:inherit; font-size:14.5px;
+  }
+  textarea::placeholder{color:#6b7699;}
+  textarea:focus, .choice:focus{outline:3px solid var(--gold); outline-offset:1px;}
+  .reason-hint{font-size:12px; color:var(--ivory-dim); margin-top:6px; font-weight:600;}
+  .reason-hint.warn{color:var(--danger); font-weight:800;}
+  .reason-hint.ok{color:var(--teal);}
+
+  .footer-bar{
+    position:sticky; bottom:0; left:0; right:0;
+    background:linear-gradient(0deg, var(--navy) 65%, transparent);
+    padding:20px 0 6px; margin-top:6px; text-align:center;
+  }
+  .counter{font-size:13.5px; color:var(--ivory-dim); margin-bottom:12px; font-weight:700;}
+  .counter b{color:var(--gold);}
+
+  button.primary{
+    background:var(--gold); color:var(--navy-deep); border:none;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800; font-size:16px; padding:16px 34px; border-radius:40px;
+    cursor:pointer; box-shadow:0 5px 0 var(--gold-dim);
+    width:100%; max-width:320px;
+  }
+  button.primary:active{transform:translateY(3px); box-shadow:0 2px 0 var(--gold-dim);}
+  button.primary:disabled{background:#3a4260; color:#7a84a8; box-shadow:0 5px 0 #2c3350; cursor:not-allowed;}
+  button.secondary{
+    background:transparent; color:var(--ivory-dim); border:2px dashed #4a5788;
+    font-family:'Pretendard'; font-weight:700; font-size:14px; padding:12px 24px; border-radius:30px;
+    cursor:pointer; width:100%; max-width:320px; margin-top:10px;
+  }
+
+  .hint-toggle{
+    background:var(--card-bg); border:3px solid var(--teal); color:var(--teal);
+    border-radius:20px; font-size:13.5px; font-weight:800; padding:9px 18px; cursor:pointer;
+    font-family:inherit; margin:8px 0 16px; display:inline-flex; align-items:center; gap:6px;
+  }
+  .hint-panel{
+    margin-bottom:16px; font-size:13.5px; color:var(--ivory-dim); line-height:1.95;
+    background:#173a38; border:3px solid var(--teal);
+    padding:14px 16px; border-radius:16px; display:none;
+  }
+  .hint-panel.show{display:block;}
+  .hint-panel b{color:var(--teal);}
+
+  .sort-card{
+    background:var(--card-bg); border:3px solid #2c3d6e;
+    border-radius:16px; padding:16px 17px; margin-bottom:11px;
+    display:flex; align-items:center; gap:12px;
+    font-size:15px; line-height:1.5; font-weight:700;
+  }
+  .sort-card .num{
+    width:30px; height:30px; border-radius:50%; background:var(--gold); color:var(--navy-deep);
+    display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; flex-shrink:0;
+  }
+  .sort-card .arrows{margin-left:auto; display:flex; gap:7px; flex-shrink:0;}
+  .sort-card .arrows button{
+    background:var(--card-bg2); border:3px solid #38487c; color:var(--ivory);
+    border-radius:10px; width:38px; height:38px; cursor:pointer; font-family:inherit; font-size:16px;
+  }
+  .sort-card .arrows button:active{background:var(--teal); color:var(--navy-deep);}
+
+  .field-box{margin-bottom:18px;}
+  .field-box label{font-size:13.5px; color:var(--teal); font-weight:800; display:block; margin-bottom:7px;}
+  input[type=text]{
+    width:100%; background:var(--card-bg); border:3px solid #38487c; border-radius:16px;
+    color:var(--ivory); padding:13px 15px; font-family:inherit; font-size:15.5px; font-weight:700;
+    min-height:50px;
+  }
+  input[type=text]::placeholder{color:#6b7699;}
+  .rep-tag{
+    display:inline-block; background:#173a38; border:3px solid var(--teal); color:var(--teal);
+    border-radius:20px; padding:7px 16px; font-size:13.5px; font-weight:800; margin-bottom:16px;
+  }
+
+  .screen{display:none;}
+  .screen.active{display:block;}
+
+  .result-box{text-align:center; padding:20px 10px 10px;}
+  .big-emoji{font-size:48px; margin-bottom:6px;}
+  .result-box .verdict{font-family:'Nanum Myeongjo',serif; font-weight:800; font-size:21px; margin:8px 0 16px; color:var(--gold);}
+  .timeline{font-size:15px; line-height:2.1; margin:14px 0; color:var(--ivory);}
+  .timeline .arrow{color:var(--teal); font-weight:800;}
+  .divider{height:3px; margin:22px 0; border-radius:3px; background:linear-gradient(90deg, transparent, var(--gold-dim), transparent);}
+  .muted{color:var(--ivory-dim); font-size:14.5px; line-height:1.75;}
+  .muted b{color:var(--gold);}
+
+  .mid-card{
+    background:var(--card-bg); border:3px solid var(--teal); border-radius:26px;
+    padding:30px 22px; text-align:center; box-shadow:0 6px 0 rgba(79,217,196,0.2);
+  }
+  .mid-card .big-emoji{font-size:56px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══════════ 시작 화면 ══════════ -->
+  <div class="screen active" id="screen-intro">
+    <header>
+      <div class="mascot-row"><span class="mascot">🐫</span></div>
+      <div class="eyebrow">2학기 · 0차시</div>
+      <h1>🕌 이슬람 세계로 가는 길</h1>
+      <p class="sub">1학기에 배운 걸 슬쩍 떠올려보고<br>2학기 첫 이야기로 넘어가 볼까?</p>
+    </header>
+    <div class="card">
+      <div class="field-box">
+        <label>학번</label>
+        <input type="text" id="in-sid" inputmode="numeric" placeholder="예: 20315" maxlength="5">
+      </div>
+      <div class="field-box">
+        <label>이름</label>
+        <input type="text" id="in-name" placeholder="이름을 적어줘">
+      </div>
+      <p class="muted">🧭 <b>1단계</b> 개념 퀴즈(개인, 8분) → ⚔️ <b>2단계</b> 왕조 흥망 순서 맞추기(모둠 대표만, 12분)<br>정답 개수 매기는 시험 아니야. 생각 흐름만 편하게 보여주면 돼!</p>
+    </div>
+    <div class="footer-bar">
+      <button class="primary" onclick="startPhase1()">시작하기 🚀</button>
+    </div>
+  </div>
+
+  <!-- ══════════ 1단계: 개인 진단 ══════════ -->
+  <div class="screen" id="screen-phase1">
+    <header>
+      <div class="eyebrow">1단계 · 개인 진단</div>
+      <h1 style="font-size:21px;">📝 3~5개 골라서 풀어봐</h1>
+      <p class="sub">첫 문항은 <b>2학기 필수 문항</b>이야, 나머지는 자유롭게!</p>
+    </header>
+    <div class="progress-row" id="progress-stars"></div>
+    <div id="quiz-list"></div>
+    <div class="footer-bar">
+      <div class="counter" id="q-counter">0개 완료</div>
+      <button class="primary" id="btn-submit-quiz" disabled onclick="submitPhase1()">제출하기 ✅</button>
+    </div>
+  </div>
+
+  <!-- ══════════ 1.5단계: 제출완료 + 대표 여부 분기 ══════════ -->
+  <div class="screen" id="screen-mid">
+    <div class="mid-card">
+      <div class="big-emoji">🎉</div>
+      <h1 style="font-size:19px; margin-top:4px;">제출 완료!</h1>
+      <p class="muted" style="margin:10px 0 22px;">
+        수고했어! 이제 모둠끼리 모여서<br>
+        <b>우마이야 왕조 카드 배열</b> 활동을 할 거야.<br><br>
+        <b style="color:var(--pink)">모둠 대표 1명의 기기에서만</b> 이어서 진행하면 돼.
+      </p>
+      <button class="primary" onclick="switchScreen('screen-phase2'); renderSort();">나는 모둠 대표예요 →</button>
+      <button class="secondary" onclick="switchScreen('screen-done')">나는 대표 아니에요, 여기서 끝!</button>
+    </div>
+  </div>
+
+  <!-- ══════════ 비대표 학생 종료 화면 ══════════ -->
+  <div class="screen" id="screen-done">
+    <div class="mid-card">
+      <div class="big-emoji">✋</div>
+      <h1 style="font-size:19px;">여기까지야!</h1>
+      <p class="muted" style="margin:10px 0 0;">
+        네 응답은 잘 제출됐어. 이제 태블릿은 내려놓고<br>
+        모둠 대표 친구랑 <b>카드 순서를 같이 의논</b>해줘 🗣️
+      </p>
+    </div>
+  </div>
+
+  <!-- ══════════ 2단계: 모둠 카드 배열 (대표만) ══════════ -->
+  <div class="screen" id="screen-phase2">
+    <header>
+      <div class="eyebrow">2단계 · 모둠 활동 (대표 전용)</div>
+      <h1 style="font-size:21px;">⚔️ 우마이야 왕조, 흥망의 순서는?</h1>
+      <p class="sub">▲▼ 버튼으로 순서를 맞춰봐. 막히면 힌트를 열어도 좋아</p>
+    </header>
+    <span class="rep-tag" id="rep-tag">대표 제출자: -</span>
+    <div class="field-box">
+      <label>모둠 번호</label>
+      <input type="text" id="in-group" placeholder="예: 3모둠">
+    </div>
+    <div id="sort-list"></div>
+    <button class="hint-toggle" onclick="toggleHint()">💡 용어 힌트</button>
+    <div class="hint-panel" id="hint-panel">
+      <b>칼리프</b> — 무함마드의 후계자, 이슬람 공동체의 정치·종교 지도자<br>
+      <b>지즈야</b> — 이슬람교로 개종하지 않은 사람이 내야 했던 세금<br>
+      <b>수니파 / 시아파</b> — 칼리프 정통성을 둘러싼 이슬람교의 두 갈래
+    </div>
+    <div class="footer-bar">
+      <button class="primary" onclick="submitPhase2()">모둠 답 제출하기 →</button>
+    </div>
+  </div>
+
+  <!-- ══════════ 결과 화면 ══════════ -->
+  <div class="screen" id="screen-result">
+    <div class="result-box">
+      <div class="big-emoji">🏛️✨</div>
+      <div class="verdict">실제 역사는 이렇게 흘러갔어!</div>
+      <div id="result-order" class="timeline"></div>
+      <div class="divider"></div>
+      <p class="muted">
+        아랍인만 우대하던 우마이야 왕조는 결국 <b>비아랍인의 불만</b>을 잠재우지 못하고<br>
+        750년, 아바스 왕조에게 무너졌어.<br><br>
+        그런데 이 왕조가 무너지기 전, <b>서유럽 쪽으로 진출하려다 한 번 저지당한 사건</b>이 있었어.<br>
+        다음 시간, 크리스트교 세계에서 그 이야기를 이어갈게 ⛪
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const CONFIG = {
+  WEBAPP_URL: "여기에_웹앱_URL_붙여넣기",
+  GAME_NAME_INDIVIDUAL: "1학기진단_개인",
+  GAME_NAME_GROUP: "1학기진단_모둠카드"
+};
+
+(function autofill(){
+  const p = new URLSearchParams(location.search);
+  if (p.get('sid')) document.getElementById('in-sid').value = p.get('sid');
+  if (p.get('name')) document.getElementById('in-name').value = p.get('name');
+})();
+
+/* 문항별 컬러 태그 (아기자기 포인트) */
+const TAG_COLORS = ['#ffd97a','#8fd6ff','#ffb3c6','#c8f5c1','#ffcf9e','#d9c2ff','#a8ecd8'];
+
+const QUESTIONS_BASE = [
+  { id:1, tag:"🌾 문명의 형성", required:false,
+    text:"고대 문명이 강 유역에서 발생한 이유로 가장 알맞은 건?",
+    choices:["춥고 건조해서","농사짓기 좋고 물자 운반이 쉬워서","산이 많아 방어에 유리해서"] },
+  { id:2, tag:"🏛️ 그리스", required:false,
+    text:"아테네와 스파르타의 정치가 다르게 발전한 까닭은?",
+    choices:["종교가 달라서","사회 운영 방식(시민참여 vs 군사통제)이 달라서","지리적 위치가 멀어서"] },
+  { id:3, tag:"🦅 로마", required:false,
+    text:"로마가 공화정에서 제정으로 바뀐 결정적 계기는?",
+    choices:["그라쿠스 형제의 개혁 실패","카이사르 암살 이후 옥타비아누스의 권력 장악","카르타고와의 전쟁 승리"] },
+  { id:4, tag:"✝️ 크리스트교 성립", required:true,
+    text:"박해받던 크리스트교가 로마의 국교가 된 순서로 맞는 건?",
+    choices:["박해→국교화→공인","박해→공인(313)→국교화(392)","공인→박해→국교화"] },
+  { id:5, tag:"🐎 남북조", required:false,
+    text:"유목민이 화북을 장악한 후 나타난 변화로 알맞은 건?",
+    choices:["한족이 모두 쫓겨났다","진의 유민이 강남으로 내려가 농업이 발전했다","중국이 통일 왕조로 안정됐다"] },
+  { id:6, tag:"🕉️ 힌두교", required:false,
+    text:"힌두교가 인도에서 널리 퍼진 이유로 가장 알맞은 건?",
+    choices:["불교보다 계율이 훨씬 엄격해서","브라만교보다 진입장벽이 낮고 대중적이어서","외국에서 들여온 새로운 종교라서"] },
+  { id:7, tag:"🕌 이슬람 세계 형성", required:true,
+    text:"무함마드가 메카에서 메디나로 피신한 사건(헤지라)의 결과는?",
+    choices:["이슬람교가 사라질 위기에 처했다","이슬람 공동체가 조직화되는 계기가 됐다","로마가 이슬람교를 공인했다"] },
+];
+const REQUIRED_IDS = QUESTIONS_BASE.filter(q=>q.required).map(q=>q.id);
+const MIN_PICK = 3, MAX_PICK = 5;
+
+function shuffleArr(arr){
+  const a = [...arr];
+  for (let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+/* 문항 순서: 필수그룹 중 1개를 무작위로 뽑아 1번 자리에 고정, 나머지는 랜덤 셔플.
+   각 문항의 보기(choices) 순서도 랜덤 셔플. */
+let QUESTIONS = [];
+function buildQuestionOrder(){
+  const requiredPool = shuffleArr(REQUIRED_IDS);
+  const firstId = requiredPool[0];
+  const firstQ = QUESTIONS_BASE.find(q=>q.id===firstId);
+  const rest = shuffleArr(QUESTIONS_BASE.filter(q=>q.id!==firstId));
+  QUESTIONS = [firstQ, ...rest].map((q, idx) => ({
+    ...q,
+    displayChoices: shuffleArr(q.choices),
+    color: TAG_COLORS[idx % TAG_COLORS.length],
+    isFirst: idx === 0
+  }));
+}
+
+const responses = {};
+
+function completedIds(){
+  return Object.keys(responses).map(Number).filter(id => {
+    const r = responses[id];
+    return r && r.choice !== undefined && r.reason && r.reason.trim().length > 0;
+  });
+}
+
+function renderStars(){
+  const el = document.getElementById('progress-stars');
+  const n = completedIds().length;
+  const prev = el.dataset.n || 0;
+  el.innerHTML = '';
+  for (let i=0;i<MAX_PICK;i++){
+    const s = document.createElement('span');
+    s.className = 'star8' + (i < n ? ' filled' : '');
+    el.appendChild(s);
+  }
+  el.dataset.n = n;
+}
+
+function renderQuiz(){
+  buildQuestionOrder();
+  const list = document.getElementById('quiz-list');
+  list.innerHTML = '';
+  QUESTIONS.forEach(q=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = 'qcard-'+q.id;
+    card.innerHTML =
+      '<div class="qtag" style="background:'+q.color+'">' + q.tag + (q.required ? ' <span class="req">'+(q.isFirst?'첫 문항·필수':'필수그룹')+'</span>' : '') + '</div>' +
+      '<div class="qtext">' + q.text + '</div>' +
+      '<div class="choices-wrap"></div>' +
+      '<div class="reason-box">' +
+        '<label>✏️ 왜 그렇게 생각해? (한 줄이면 충분해)</label>' +
+        '<textarea placeholder="이유를 적어야 완료로 인정돼" oninput="onReasonInput(' + q.id + ', this.value)"></textarea>' +
+        '<div class="reason-hint">아직 이유를 안 썼어 — 한 줄만 적으면 완료!</div>' +
+      '</div>';
+    const cw = card.querySelector('.choices-wrap');
+    q.displayChoices.forEach((c, idx)=>{
+      const b = document.createElement('button');
+      b.className = 'choice';
+      b.type = 'button';
+      b.textContent = ['①','②','③'][idx] + ' ' + c;
+      b.onclick = ()=>selectChoice(q.id, c, b, card);
+      cw.appendChild(b);
+    });
+    list.appendChild(card);
+  });
+  renderStars();
+}
+
+function selectChoice(qid, choiceText, btnEl, cardEl){
+  cardEl.querySelectorAll('.choice').forEach(b=>b.classList.remove('selected'));
+  btnEl.classList.add('selected');
+  if (!responses[qid]) responses[qid] = {};
+  responses[qid].choice = choiceText;
+  cardEl.querySelector('.reason-box').classList.add('show');
+  updateCardState(qid, cardEl);
+  updateCounter();
+}
+function onReasonInput(qid, val){
+  if (!responses[qid]) responses[qid] = {};
+  responses[qid].reason = val;
+  updateCardState(qid, document.getElementById('qcard-'+qid));
+  updateCounter();
+}
+function updateCardState(qid, cardEl){
+  const r = responses[qid];
+  const hint = cardEl.querySelector('.reason-hint');
+  const isDone = r && r.choice !== undefined && r.reason && r.reason.trim().length > 0;
+  cardEl.classList.toggle('done', !!isDone);
+  if (r && r.choice !== undefined){
+    if (isDone){
+      hint.textContent = '완료! 👍';
+      hint.className = 'reason-hint ok';
+    } else {
+      hint.textContent = '아직 이유를 안 썼어 — 한 줄만 적으면 완료!';
+      hint.className = 'reason-hint warn';
+    }
+  }
+}
+
+function updateCounter(){
+  const done = completedIds();
+  const count = done.length;
+  const hasRequired = done.some(id => REQUIRED_IDS.includes(id));
+  const counterEl = document.getElementById('q-counter');
+  const btn = document.getElementById('btn-submit-quiz');
+
+  if (count > MAX_PICK){
+    counterEl.innerHTML = '<span style="color:var(--danger)">최대 ' + MAX_PICK + '개까지만 완료하면 돼!</span>';
+  } else {
+    let msg = '<b>' + count + '개</b> 완료';
+    msg += hasRequired ? ' · 필수 충족 ✅' : ' · 첫 문항(필수)을 아직 안 풀었어';
+    counterEl.innerHTML = msg;
+  }
+  renderStars();
+  btn.disabled = !(count >= MIN_PICK && count <= MAX_PICK && hasRequired);
+}
+
+function startPhase1(){
+  if (!document.getElementById('in-sid').value.trim() || !document.getElementById('in-name').value.trim()){
+    alert('학번과 이름을 먼저 입력해줘'); return;
+  }
+  renderQuiz();
+  switchScreen('screen-phase1');
+}
+
+function switchScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function submitPhase1(){
+  const sid = document.getElementById('in-sid').value.trim();
+  const name = document.getElementById('in-name').value.trim();
+  const done = completedIds();
+  const detail = done.map(id=>{
+    const q = QUESTIONS.find(x=>x.id===id);
+    const r = responses[id];
+    return { q: q.tag, choice: r.choice, reason: r.reason || '' };
+  });
+  const summary = detail.map(d => d.q).join(', ') + ' 선택';
+  const reasonsJoined = detail.map(d=>'[' + d.q + '] ' + d.reason).join(' / ');
+
+  postToSheet({
+    gameName: CONFIG.GAME_NAME_INDIVIDUAL,
+    studentId: sid,
+    studentName: name,
+    choiceSummary: summary,
+    diffSummary: '',
+    reflection: reasonsJoined,
+    choicesJson: JSON.stringify(detail)
+  });
+
+  document.getElementById('rep-tag').textContent = '대표 제출자: ' + sid + ' ' + name;
+  switchScreen('screen-mid');
+}
+
+/* ════════════ 2단계: 카드 배열 ════════════ */
+const CARDS = [
+  { key:'hejira', label:'🐫 무함마드, 메카에서 메디나로 피신 (헤지라)', order:1 },
+  { key:'conquest', label:'⚔️ 정통 칼리프 시대 정복 전쟁과 수니파·시아파 분열', order:2 },
+  { key:'umayyad', label:'👑 우마이야 왕조 성립 (661)', order:3 },
+  { key:'decline', label:'💢 아랍인 우대·비아랍인 차별 정책으로 왕조 흔들림', order:4 },
+];
+let sortState = [];
+
+function renderSort(){
+  sortState = shuffleArr(CARDS);
+  const list = document.getElementById('sort-list');
+  list.innerHTML = '';
+  sortState.forEach((c, i)=>{
+    const div = document.createElement('div');
+    div.className = 'sort-card';
+    div.innerHTML =
+      '<div class="num">' + (i+1) + '</div>' +
+      '<div>' + c.label + '</div>' +
+      '<div class="arrows">' +
+      '<button aria-label="위로" onclick="moveCard(' + i + ',-1)">▲</button>' +
+      '<button aria-label="아래로" onclick="moveCard(' + i + ',1)">▼</button>' +
+      '</div>';
+    list.appendChild(div);
+  });
+}
+function moveCard(i, dir){
+  const j = i + dir;
+  if (j < 0 || j >= sortState.length) return;
+  const tmp = sortState[i]; sortState[i] = sortState[j]; sortState[j] = tmp;
+  renderSortDOM();
+}
+function renderSortDOM(){
+  const list = document.getElementById('sort-list');
+  list.innerHTML = '';
+  sortState.forEach((c, i)=>{
+    const div = document.createElement('div');
+    div.className = 'sort-card';
+    div.innerHTML =
+      '<div class="num">' + (i+1) + '</div>' +
+      '<div>' + c.label + '</div>' +
+      '<div class="arrows">' +
+      '<button aria-label="위로" onclick="moveCard(' + i + ',-1)">▲</button>' +
+      '<button aria-label="아래로" onclick="moveCard(' + i + ',1)">▼</button>' +
+      '</div>';
+    list.appendChild(div);
+  });
+}
+function toggleHint(){
+  document.getElementById('hint-panel').classList.toggle('show');
+}
+
+function submitPhase2(){
+  const group = document.getElementById('in-group').value.trim();
+  const sid = document.getElementById('in-sid').value.trim();
+  const name = document.getElementById('in-name').value.trim();
+  if (!group){ alert('모둠 번호를 입력해줘 (예: 3모둠)'); return; }
+
+  const isCorrect = sortState.every((c,i)=>c.order === i+1);
+
+  postToSheet({
+    gameName: CONFIG.GAME_NAME_GROUP,
+    studentId: sid,
+    studentName: name + ' (모둠 대표)',
+    choiceSummary: group,
+    diffSummary: isCorrect ? '정답' : '오답',
+    reflection: '',
+    choicesJson: JSON.stringify(sortState.map(c=>c.key))
+  });
+
+  document.getElementById('result-order').innerHTML =
+    CARDS.slice().sort((a,b)=>a.order-b.order).map(c=>c.label).join('<div class="arrow">↓</div>');
+  switchScreen('screen-result');
+}
+
+/* ════════════ 백엔드 전송 (기존 doPost 스키마 재사용) ════════════ */
+function postToSheet(payload){
+  if (!CONFIG.WEBAPP_URL || CONFIG.WEBAPP_URL.indexOf('http') !== 0){
+    console.warn('WEBAPP_URL 미설정 — 로컬 테스트 모드', payload);
+    return;
+  }
+  fetch(CONFIG.WEBAPP_URL, {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  }).catch(err => console.error('전송 실패', err));
+}
+</script>
+</body>
+</html>
