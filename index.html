@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>1학기 역사 총 복습</title>
+<title>이슬람 세계로 가는 길</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -121,6 +121,28 @@
   .reason-hint.warn{color:var(--danger); font-weight:800;}
   .reason-hint.ok{color:var(--teal);}
 
+  .reveal-btn{
+    margin-top:10px; background:none; border:2px dashed var(--gold); color:var(--gold);
+    border-radius:14px; padding:8px 14px; font-size:12.5px; font-weight:800; cursor:pointer;
+    font-family:inherit;
+  }
+  .reveal-panel{
+    margin-top:10px; padding:12px 14px; border-radius:14px; font-size:13.5px; line-height:1.7; font-weight:700;
+  }
+  .reveal-panel.correct{background:#173a2c; border:2px solid var(--teal); color:var(--teal);}
+  .reveal-panel.wrong{background:#3a2323; border:2px solid var(--danger); color:#ffb3a8;}
+
+  .review-item{
+    background:var(--card-bg); border:2px solid #2c3d6e; border-radius:16px;
+    padding:14px 16px; margin-bottom:10px; font-size:14px; line-height:1.6;
+  }
+  .review-item.correct{border-color:var(--teal);}
+  .review-item.wrong{border-color:var(--danger);}
+  .review-item .rtag{font-size:12px; font-weight:800; color:var(--ivory-dim); margin-bottom:4px;}
+  .review-item .rmark{font-weight:800;}
+  .review-item.correct .rmark{color:var(--teal);}
+  .review-item.wrong .rmark{color:var(--danger);}
+
   .footer-bar{
     position:sticky; bottom:0; left:0; right:0;
     background:linear-gradient(0deg, var(--navy) 65%, transparent);
@@ -237,8 +259,8 @@
   <div class="screen" id="screen-phase1">
     <header>
       <div class="eyebrow">1단계 · 개인 진단</div>
-      <h1 style="font-size:21px;">📝 3~5개 골라서 풀어봐</h1>
-      <p class="sub">첫 문항은 <b>2학기 필수 문항</b>이야, 나머지는 자유롭게!</p>
+      <h1 style="font-size:21px;">📝 최소 3개, 다 풀면 더 좋아!</h1>
+      <p class="sub">첫 문항은 <b>2학기 필수 문항</b>이야, 나머지는 자유롭게 — 많이 풀수록 좋아!</p>
     </header>
     <div class="progress-row" id="progress-stars"></div>
     <div id="quiz-list"></div>
@@ -248,14 +270,17 @@
     </div>
   </div>
 
-  <!-- ══════════ 1.5단계: 제출완료 + 대표 여부 분기 ══════════ -->
+  <!-- ══════════ 1.5단계: 제출완료 + 정답 확인 + 대표 여부 분기 ══════════ -->
   <div class="screen" id="screen-mid">
     <div class="mid-card">
       <div class="big-emoji">🎉</div>
       <h1 style="font-size:19px; margin-top:4px;">제출 완료!</h1>
-      <p class="muted" style="margin:10px 0 22px;">
-        수고했어! 이제 모둠끼리 모여서<br>
-        <b>우마이야 왕조 카드 배열</b> 활동을 할 거야.<br><br>
+      <p class="muted" style="margin:10px 0 18px;">네가 고른 답, 정답이랑 비교해볼까?</p>
+    </div>
+    <div id="review-list" style="margin-top:16px;"></div>
+    <div class="mid-card" style="margin-top:18px;">
+      <p class="muted" style="margin:0 0 22px;">
+        이제 모둠끼리 모여서 <b>우마이야 왕조 카드 배열</b> 활동을 할 거야.<br>
         <b style="color:var(--pink)">모둠 대표 1명의 기기에서만</b> 이어서 진행하면 돼.
       </p>
       <button class="primary" onclick="switchScreen('screen-phase2'); renderSort();">나는 모둠 대표예요 →</button>
@@ -345,19 +370,20 @@ const QUESTIONS_BASE = [
     choices:["그라쿠스 형제의 개혁 실패","카이사르 암살 이후 옥타비아누스의 권력 장악","카르타고와의 전쟁 승리"] },
   { id:4, tag:"✝️ 크리스트교 성립", required:true,
     text:"박해받던 크리스트교가 로마의 국교가 된 순서로 맞는 건?",
-    choices:["박해→국교화→공인","박해→공인(313)→국교화(392)","공인→박해→국교화"] },
+    choices:["박해→국교화→공인","박해→공인(313)→국교화(392)","공인→박해→국교화"], answer:1 },
   { id:5, tag:"🐎 남북조", required:false,
     text:"유목민이 화북을 장악한 후 나타난 변화로 알맞은 건?",
-    choices:["한족이 모두 쫓겨났다","진의 유민이 강남으로 내려가 농업이 발전했다","중국이 통일 왕조로 안정됐다"] },
+    choices:["한족이 모두 쫓겨났다","진의 유민이 강남으로 내려가 농업이 발전했다","중국이 통일 왕조로 안정됐다"], answer:1 },
   { id:6, tag:"🕉️ 힌두교", required:false,
     text:"힌두교가 인도에서 널리 퍼진 이유로 가장 알맞은 건?",
-    choices:["불교보다 계율이 훨씬 엄격해서","브라만교보다 진입장벽이 낮고 대중적이어서","외국에서 들여온 새로운 종교라서"] },
+    choices:["불교보다 계율이 훨씬 엄격해서","브라만교보다 진입장벽이 낮고 대중적이어서","외국에서 들여온 새로운 종교라서"], answer:1 },
   { id:7, tag:"🕌 이슬람 세계 형성", required:true,
     text:"무함마드가 메카에서 메디나로 피신한 사건(헤지라)의 결과는?",
-    choices:["이슬람교가 사라질 위기에 처했다","이슬람 공동체가 조직화되는 계기가 됐다","로마가 이슬람교를 공인했다"] },
+    choices:["이슬람교가 사라질 위기에 처했다","이슬람 공동체가 조직화되는 계기가 됐다","로마가 이슬람교를 공인했다"], answer:1 },
 ];
+QUESTIONS_BASE.forEach(q=>{ if (q.answer===undefined) q.answer = 1; });
 const REQUIRED_IDS = QUESTIONS_BASE.filter(q=>q.required).map(q=>q.id);
-const MIN_PICK = 3, MAX_PICK = 5;
+const MIN_PICK = 3; // 상한 없음 — 다 풀수록 좋음
 
 function shuffleArr(arr){
   const a = [...arr];
@@ -379,6 +405,7 @@ function buildQuestionOrder(){
   QUESTIONS = [firstQ, ...rest].map((q, idx) => ({
     ...q,
     displayChoices: shuffleArr(q.choices),
+    correctText: q.choices[q.answer],
     color: TAG_COLORS[idx % TAG_COLORS.length],
     isFirst: idx === 0
   }));
@@ -396,14 +423,13 @@ function completedIds(){
 function renderStars(){
   const el = document.getElementById('progress-stars');
   const n = completedIds().length;
-  const prev = el.dataset.n || 0;
+  const total = QUESTIONS.length || 7;
   el.innerHTML = '';
-  for (let i=0;i<MAX_PICK;i++){
+  for (let i=0;i<total;i++){
     const s = document.createElement('span');
     s.className = 'star8' + (i < n ? ' filled' : '');
     el.appendChild(s);
   }
-  el.dataset.n = n;
 }
 
 function renderQuiz(){
@@ -471,19 +497,18 @@ function updateCardState(qid, cardEl){
 function updateCounter(){
   const done = completedIds();
   const count = done.length;
+  const total = QUESTIONS.length;
   const hasRequired = done.some(id => REQUIRED_IDS.includes(id));
   const counterEl = document.getElementById('q-counter');
   const btn = document.getElementById('btn-submit-quiz');
 
-  if (count > MAX_PICK){
-    counterEl.innerHTML = '<span style="color:var(--danger)">최대 ' + MAX_PICK + '개까지만 완료하면 돼!</span>';
-  } else {
-    let msg = '<b>' + count + '개</b> 완료';
-    msg += hasRequired ? ' · 필수 충족 ✅' : ' · 첫 문항(필수)을 아직 안 풀었어';
-    counterEl.innerHTML = msg;
-  }
+  let msg = '<b>' + count + '개</b> / ' + total + '개 완료';
+  msg += hasRequired ? ' · 필수 충족 ✅' : ' · 첫 문항(필수)을 아직 안 풀었어';
+  if (count >= MIN_PICK && hasRequired) msg += ' · 더 풀수록 좋아! 😊';
+  counterEl.innerHTML = msg;
+
   renderStars();
-  btn.disabled = !(count >= MIN_PICK && count <= MAX_PICK && hasRequired);
+  btn.disabled = !(count >= MIN_PICK && hasRequired);
 }
 
 function startPhase1(){
@@ -507,7 +532,7 @@ function submitPhase1(){
   const detail = done.map(id=>{
     const q = QUESTIONS.find(x=>x.id===id);
     const r = responses[id];
-    return { q: q.tag, choice: r.choice, reason: r.reason || '' };
+    return { q: q.tag, choice: r.choice, reason: r.reason || '', correct: q.correctText, isCorrect: r.choice === q.correctText };
   });
   const summary = detail.map(d => d.q).join(', ') + ' 선택';
   const reasonsJoined = detail.map(d=>'[' + d.q + '] ' + d.reason).join(' / ');
@@ -521,6 +546,17 @@ function submitPhase1(){
     reflection: reasonsJoined,
     choicesJson: JSON.stringify(detail)
   });
+
+  const reviewEl = document.getElementById('review-list');
+  reviewEl.innerHTML = detail.map(d =>
+    '<div class="review-item ' + (d.isCorrect ? 'correct' : 'wrong') + '">' +
+      '<div class="rtag">' + d.q + '</div>' +
+      '<div>네 답: ' + d.choice + '</div>' +
+      (d.isCorrect
+        ? '<div class="rmark">✅ 정답!</div>'
+        : '<div class="rmark">❌ 정답은: ' + d.correct + '</div>') +
+    '</div>'
+  ).join('');
 
   document.getElementById('rep-tag').textContent = '대표 제출자: ' + sid + ' ' + name;
   switchScreen('screen-mid');
