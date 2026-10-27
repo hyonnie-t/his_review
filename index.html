@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <!-- 포털 로그인 세션 자동 첨부(history26 v83) -->
 <script src="https://hyonnie-t.github.io/history26/snippets/portal_auth.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>이슬람 세계로 가는 길</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
@@ -345,6 +345,16 @@
 </div>
 
 <script>
+
+/* ── 2026-10-27 포털 공통 규약: ?preview=1(교사 «학생 화면 보기»에서 연 링크)이면 시트에 저장하지 않는다.
+ *    전엔 교사가 미리보기에서 끝까지 눌러 보면 그 학생 이름으로 진짜 기록이 남았다. */
+const PREVIEW = new URLSearchParams(location.search).get("preview") === "1";
+if(PREVIEW){
+  const bar = document.createElement("div");
+  bar.textContent = "🔍 미리보기 모드 — 제출해도 기록이 저장되지 않아요";
+  bar.setAttribute("style","position:sticky;top:0;z-index:50;background:#2E4A7A;color:#fff;font-size:14px;font-weight:700;text-align:center;padding:8px 12px;");
+  document.body.prepend(bar);
+}
 const CONFIG = {
   WEBAPP_URL: "https://script.google.com/macros/s/AKfycbyXSjCfWY_HiZFqW_OBR-FQDoIfF1z_STqyKWUI31MacHeY3u7hbirFSFDvW-5yuUHaJQ/exec",
   GAME_NAME_INDIVIDUAL: "1학기진단_개인",
@@ -654,6 +664,7 @@ function submitPhase2(){
 
 /* ════════════ 백엔드 전송 (기존 doPost 스키마 재사용, v7 groupId·aiComment 대응) ════════════ */
 function postToSheet(payload){
+  if (PREVIEW){ return Promise.resolve({ result: 'success', preview: true }); } // 미리보기는 저장 생략
   if (!CONFIG.WEBAPP_URL || CONFIG.WEBAPP_URL.indexOf('http') !== 0){
     console.warn('WEBAPP_URL 미설정 — 로컬 테스트 모드', payload);
     return Promise.resolve(null);
